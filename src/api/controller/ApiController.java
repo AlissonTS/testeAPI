@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class ApiController {
     @RequestMapping(value = "recipies", method = RequestMethod.GET)
     public ModelAndView recipies(HttpServletRequest rq) {
+        ModelAndView mv = new ModelAndView("home");
         String recipies = rq.getParameter("i");
         if (recipies != null) {
             System.out.println("Recipies: " + recipies);
@@ -106,9 +107,10 @@ public class ApiController {
                     Gson gson = new Gson();
                     String json = gson.toJson(jsonShow);
                     System.out.println("JSON gerado: " + json);
+                    mv.addObject("jsonResultado", json);
                 }
             }
         }
-        return new ModelAndView("home");
+        return mv;
     }
 }

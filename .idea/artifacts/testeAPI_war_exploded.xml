@@ -1,11 +1,21 @@
 <component name="ArtifactManager">
-  <artifact type="exploded-war" name="testeAPI:war exploded">
+  <artifact type="exploded-war" build-on-make="true" name="testeAPI:war exploded">
     <output-path>$PROJECT_DIR$/out/artifacts/testeAPI_war_exploded</output-path>
     <root id="root">
       <element id="javaee-facet-resources" facet="testeAPI/web/Web" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
           <element id="module-output" name="testeAPI" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="jstl-1.2" />
+          <element id="library" level="project" name="json-20180130" />
+          <element id="library" level="project" name="gson-2.8.5" />
+          <element id="library" level="project" name="giphy4j-1.0.1" />
+          <element id="library" level="project" name="Spring MVC-4.3.18.RELEASE" />
+          <element id="library" level="project" name="Spring-4.3.18.RELEASE" />
+          <element id="library" level="project" name="jsp-api-2.1" />
+          <element id="library" level="project" name="servlet-api-2.5" />
         </element>
       </element>
     </root>
