@@ -24,5 +24,11 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Spring-4.3.18.RELEASE" level="project" />
     <orderEntry type="library" name="Spring MVC-4.3.18.RELEASE" level="project" />
+    <orderEntry type="library" name="giphy4j-1.0.1" level="project" />
+    <orderEntry type="library" name="gson-2.8.5" level="project" />
+    <orderEntry type="library" name="json-20180130" level="project" />
+    <orderEntry type="library" name="jsp-api-2.1" level="project" />
+    <orderEntry type="library" name="jstl-1.2" level="project" />
+    <orderEntry type="library" name="servlet-api-2.5" level="project" />
   </component>
 </module>
