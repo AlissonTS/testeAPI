@@ -7,6 +7,9 @@ import api.util.ReadJSON;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
@@ -58,7 +61,9 @@ public class ApiController {
 
                             String ingredients = recipiesArray.getJSONObject(i).getString("ingredients");
                             ingredients = manipulateString.replaceEscapeString(ingredients);
-                            String[] arrayIngredients = ingredients.split(",");
+                            String[] arrayIngredients = ingredients.split(", ");
+                            List<String> ingredientsArray = new ArrayList<>(Arrays.asList(arrayIngredients));
+                            Collections.sort(ingredientsArray);
 
                             String link = recipiesArray.getJSONObject(i).getString("href");
                             link = manipulateString.replaceEscapeString(link);
@@ -67,7 +72,7 @@ public class ApiController {
                             recipie.setTitle(title);
                             recipie.setLink(link);
                             List<String> ingredientsList = recipie.getIngredients();
-                            for (String ingredientsReturn : arrayIngredients) {
+                            for (String ingredientsReturn : ingredientsArray) {
                                 ingredientsList.add(ingredientsReturn);
                             }
                             recipie.setIngredients(ingredientsList);
