@@ -2,6 +2,7 @@ package api.controller;
 
 import api.model.JsonShow;
 import api.model.Recipie;
+import api.util.CheckConnection;
 import api.util.ManipulateString;
 import api.util.ReadJSON;
 import com.google.gson.Gson;
@@ -33,91 +34,98 @@ public class ApiController {
             recipies = onlyRecipies[0];
 
             String[] arrayRecipies = recipies.split(",");
-            if (arrayRecipies.length <= 3) {
-                String url = "http://www.recipepuppy.com/api/?i=";
-                url = url + recipies;
 
-                String jsonString = null;
-                try {
-                    jsonString = new ReadJSON().readJsonFromUrl(url);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if (jsonString != null) {
-                    JsonShow jsonShow = new JsonShow();
-                    for (String keyWord : arrayRecipies) {
-                        List<String> keyWords = jsonShow.getKeyWords();
-                        keyWords.add(keyWord);
-                        jsonShow.setKeyWords(keyWords);
+            CheckConnection checkConnection = new CheckConnection();
+            if (checkConnection.tryConnect()) {
+                if (arrayRecipies.length <= 3) {
+                    String url = "http://www.recipepuppy.com/api/?i=";
+                    url = url + recipies;
+
+                    String jsonString = null;
+                    try {
+                        jsonString = new ReadJSON().readJsonFromUrl(url);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                    JSONObject recipiesJSON = new JSONObject(jsonString);
-                    JSONArray recipiesArray = recipiesJSON.getJSONArray("results");
-                    if (recipiesArray != null) {
-                        for (int i = 0; i < recipiesArray.length(); i++) {
-                            ManipulateString manipulateString = new ManipulateString();
-                            String title = recipiesArray.getJSONObject(i).getString("title");
-                            title = manipulateString.replaceEscapeString(title);
-
-                            String ingredients = recipiesArray.getJSONObject(i).getString("ingredients");
-                            ingredients = manipulateString.replaceEscapeString(ingredients);
-                            String[] arrayIngredients = ingredients.split(", ");
-                            List<String> ingredientsArray = new ArrayList<>(Arrays.asList(arrayIngredients));
-                            Collections.sort(ingredientsArray);
-
-                            String link = recipiesArray.getJSONObject(i).getString("href");
-                            link = manipulateString.replaceEscapeString(link);
-
-                            Recipie recipie = new Recipie();
-                            recipie.setTitle(title);
-                            recipie.setLink(link);
-                            List<String> ingredientsList = recipie.getIngredients();
-                            for (String ingredientsReturn : ingredientsArray) {
-                                ingredientsList.add(ingredientsReturn);
-                            }
-                            recipie.setIngredients(ingredientsList);
-
-                            String urlAPIGif = "http://api.giphy.com/v1/gifs/search?";
-                            String search = title.replaceAll(" ", "+");
-                            String keyAPI = "dc6zaTOxFJmzC";
-                            String limit = "1";
-
-                            String urlConcat = urlAPIGif + "q=" + search + "&api_key=" + keyAPI + "&limit=" + limit;
-
-                            String jsonStringGif = null;
-                            try {
-                                jsonStringGif = new ReadJSON().readJsonFromUrl(urlConcat);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            String urlGif;
-                            if (jsonStringGif != null) {
-                                JSONObject gifJSON = new JSONObject(jsonStringGif);
-                                JSONArray dataArray = gifJSON.getJSONArray("data");
-                                JSONObject images = (JSONObject) dataArray.getJSONObject(0).get("images");
-                                JSONObject original = (JSONObject) images.get("original");
-                                urlGif = original.getString("url");
-                                String[] urlGifExtension = urlGif.split(".gif");
-                                urlGif = urlGifExtension[0] + ".gif";
-                            } else {
-                                urlGif = "No API key found for this recipie title";
-                            }
-                            recipie.setGif(urlGif);
-
-                            List<Recipie> recipiesList = jsonShow.getRecipies();
-                            recipiesList.add(recipie);
-                            jsonShow.setRecipies(recipiesList);
+                    if (jsonString != null) {
+                        JsonShow jsonShow = new JsonShow();
+                        for (String keyWord : arrayRecipies) {
+                            List<String> keyWords = jsonShow.getKeyWords();
+                            keyWords.add(keyWord);
+                            jsonShow.setKeyWords(keyWords);
                         }
+                        JSONObject recipiesJSON = new JSONObject(jsonString);
+                        JSONArray recipiesArray = recipiesJSON.getJSONArray("results");
+                        if (recipiesArray != null) {
+                            for (int i = 0; i < recipiesArray.length(); i++) {
+                                ManipulateString manipulateString = new ManipulateString();
+                                String title = recipiesArray.getJSONObject(i).getString("title");
+                                title = manipulateString.replaceEscapeString(title);
+
+                                String ingredients = recipiesArray.getJSONObject(i).getString("ingredients");
+                                ingredients = manipulateString.replaceEscapeString(ingredients);
+                                String[] arrayIngredients = ingredients.split(", ");
+                                List<String> ingredientsArray = new ArrayList<>(Arrays.asList(arrayIngredients));
+                                Collections.sort(ingredientsArray);
+
+                                String link = recipiesArray.getJSONObject(i).getString("href");
+                                link = manipulateString.replaceEscapeString(link);
+
+                                Recipie recipie = new Recipie();
+                                recipie.setTitle(title);
+                                recipie.setLink(link);
+                                List<String> ingredientsList = recipie.getIngredients();
+                                for (String ingredientsReturn : ingredientsArray) {
+                                    ingredientsList.add(ingredientsReturn);
+                                }
+                                recipie.setIngredients(ingredientsList);
+
+                                String urlAPIGif = "http://api.giphy.com/v1/gifs/search?";
+                                String search = title.replaceAll(" ", "+");
+                                String keyAPI = "dc6zaTOxFJmzC";
+                                String limit = "1";
+
+                                String urlConcat = urlAPIGif + "q=" + search + "&api_key=" + keyAPI + "&limit=" + limit;
+
+                                String jsonStringGif = null;
+                                try {
+                                    jsonStringGif = new ReadJSON().readJsonFromUrl(urlConcat);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                String urlGif;
+                                if (jsonStringGif != null) {
+                                    JSONObject gifJSON = new JSONObject(jsonStringGif);
+                                    JSONArray dataArray = gifJSON.getJSONArray("data");
+                                    JSONObject images = (JSONObject) dataArray.getJSONObject(0).get("images");
+                                    JSONObject original = (JSONObject) images.get("original");
+                                    urlGif = original.getString("url");
+                                    String[] urlGifExtension = urlGif.split(".gif");
+                                    urlGif = urlGifExtension[0] + ".gif";
+                                } else {
+                                    urlGif = "No API key found for this recipie title";
+                                }
+                                recipie.setGif(urlGif);
+
+                                List<Recipie> recipiesList = jsonShow.getRecipies();
+                                recipiesList.add(recipie);
+                                jsonShow.setRecipies(recipiesList);
+                            }
+                        }
+                        Gson gson = new Gson();
+                        String json = gson.toJson(jsonShow);
+                        System.out.println("JSON gerado: " + json);
+                        mv.addObject("jsonResultado", json);
+                    } else {
+                        mv.addObject("tipoErro", "Erro em consulta em API Recipe Puppy.");
                     }
-                    Gson gson = new Gson();
-                    String json = gson.toJson(jsonShow);
-                    System.out.println("JSON gerado: " + json);
-                    mv.addObject("jsonResultado", json);
                 } else {
-                    mv.addObject("tipoErro", "Erro em consulta em API Recipe Puppy.");
+                    mv.addObject("tipoErro", "Mais de três ingredientes colocados para pesquisa.");
                 }
             } else {
-                mv.addObject("tipoErro", "Mais de três ingredientes colocados para pesquisa.");
+                mv.addObject("tipoErro", "Sem conexão com internet.");
             }
+
             mv.addObject("consultaFeita", "Sim");
         }
         return mv;
