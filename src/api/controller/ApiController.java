@@ -39,8 +39,7 @@ public class ApiController {
 
                 String jsonString = null;
                 try {
-                    new ReadJSON();
-                    jsonString = ReadJSON.readJsonFromUrl(url);
+                    jsonString = new ReadJSON().readJsonFromUrl(url);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -113,8 +112,13 @@ public class ApiController {
                     String json = gson.toJson(jsonShow);
                     System.out.println("JSON gerado: " + json);
                     mv.addObject("jsonResultado", json);
+                } else {
+                    mv.addObject("tipoErro", "Erro em consulta em API Recipe Puppy.");
                 }
+            } else {
+                mv.addObject("tipoErro", "Mais de três ingredientes colocados para pesquisa.");
             }
+            mv.addObject("consultaFeita", "Sim");
         }
         return mv;
     }
